@@ -2,6 +2,7 @@
 #include "pinout.hpp"
 #include "gpio.hpp"
 #include "pwm.hpp"
+#include "dac.hpp"
 // RTOS stuff
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -56,6 +57,8 @@ void setup(){
     // Setup of bluetooth specific stuff, flash, event handlers and more
     pins::o_ez_wheel_1_on_off.set_level(0);
     pins::o_ez_wheel_2_on_off.set_level(1);
+    pins::ez_wheel_1_dac.set_level(255);
+    pins::ez_wheel_2_dac.set_level(0);
 
     
 }
@@ -69,6 +72,8 @@ void main_loop(){
         bool buttonState = pins::i_sync_button.get_state();
 
         pins::motor.set_duty(i/2.55, buttonState);
+        pins::ez_wheel_1_dac.set_level(i);
+        pins::ez_wheel_2_dac.set_level(255-i);
 
         ESP_LOGI(TAG,"Button (PA%d): %d", SYNC_BUTTON, buttonState);
         vTaskDelay(100/portTICK_PERIOD_MS);
