@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "pinout.hpp"
 #include "gpio.hpp"
+#include "pwm.hpp"
 // RTOS stuff
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -53,11 +54,25 @@ void debug_info(){
 
 void setup(){
     // Setup of bluetooth specific stuff, flash, event handlers and more
+    pins::o_ez_wheel_1_on_off.set_level(0);
+    pins::o_ez_wheel_2_on_off.set_level(1);
+
+    
 }
 
 void main_loop(){
+    uint8_t i = 0;
     while (true){
         ESP_LOGI(TAG, "Time since boot: %lu", xTaskGetTickCount());
-        vTaskDelay(1000/portTICK_PERIOD_MS);
+        pins::o_ez_wheel_1_on_off.invert_level();
+        pins::o_ez_wheel_2_on_off.invert_level();
+        bool buttonState = pins::i_sync_button.get_state();
+
+        pins::motor.set_duty(i/2.55, buttonState);
+
+        ESP_LOGI(TAG,"Button (PA%d): %d", SYNC_BUTTON, buttonState);
+        vTaskDelay(100/portTICK_PERIOD_MS);
+
+        i += 10;
     }
 }

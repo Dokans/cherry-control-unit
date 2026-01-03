@@ -6,14 +6,14 @@
 namespace pins
 {
     template<gpio_num_t p>
-    class GPIO {
+    class gpio {
     public:
-        GPIO(){
+        gpio(){
             gpio_reset_pin(p);
             gpioMode = GPIO_MODE_OUTPUT;
             set_direction();
         }
-        explicit GPIO(gpio_mode_t direction){
+        explicit gpio(gpio_mode_t direction){
             gpio_reset_pin(p);
             gpioMode = direction;
             set_direction();
@@ -38,10 +38,12 @@ namespace pins
             gpio_set_direction(p, gpioMode);
         }
     };
-    GPIO<EZ_WHEEL_1_ON_OFF> o_ez_wheel_1_on_off;
-    GPIO<EZ_WHEEL_2_ON_OFF> o_ez_wheel_2_on_off;
-    GPIO<HBRIDGE_1>         o_hbridge_1;
-    GPIO<HBRIDGE_2>         o_hbridge_2;
-    GPIO<SYNC_BUTTON>       i_sync_button;
+    // Outputs
+    gpio<EZ_WHEEL_1_ON_OFF> o_ez_wheel_1_on_off;
+    gpio<EZ_WHEEL_2_ON_OFF> o_ez_wheel_2_on_off;
+    gpio<HSS_CONTROL>       o_hss_control;
+    // Inputs
+    gpio<SYNC_BUTTON>       i_sync_button;
+    
 
 } // namespace gpio
