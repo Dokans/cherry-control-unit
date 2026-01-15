@@ -3,6 +3,7 @@
 #include "gpio.hpp"
 #include "pwm.hpp"
 #include "dac.hpp"
+#include "wifi.hpp"
 // RTOS stuff
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -12,6 +13,7 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 #include "esp_log.h"
+#include "nvs_flash.h"
 
 
 static const char *TAG = "Master";
@@ -54,13 +56,22 @@ void debug_info(){
 }
 
 void setup(){
+    // Enable NVS flash for WiFi
+    esp_err_t err =  nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND){
+        nvs_flash_erase();
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+    wifi_ap_init();
+
     // Setup of bluetooth specific stuff, flash, event handlers and more
     pins::o_ez_wheel_1_on_off.set_level(0);
     pins::o_ez_wheel_2_on_off.set_level(1);
     pins::ez_wheel_1_dac.set_level(255);
     pins::ez_wheel_2_dac.set_level(0);
 
-    
+
 }
 
 void main_loop(){
